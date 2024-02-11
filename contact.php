@@ -22,39 +22,16 @@
     </nav>
     <section id="about">
     <div class="container2">
-        <h2>About Our Task Manager</h2>
-        <p>Welcome to our task manager application! Our task manager is designed to help individuals and teams organize their tasks efficiently, boost productivity, and achieve their goals.</p>
-        
-        <h3>Our Mission</h3>
-        <p>Our mission is to provide a user-friendly and feature-rich task management solution that simplifies task organization, enhances collaboration, and improves overall productivity.</p>
-        
-        <h3>Key Features</h3>
-        <p>Our task manager application offers a range of powerful features, including:</p>
-        <ul>
-            <li>Task creation and assignment</li>
-            <li>Prioritization and categorization of tasks</li>
-            <li>Due date tracking and reminders</li>
-            <li>Integration with popular tools and platforms</li>
-            <!-- Add more features as needed -->
-        </ul>
-        
-        <h3>Why Choose Our Task Manager?</h3>
-        <p>There are many reasons to choose our task manager for your personal and professional task management needs:</p>
-        <ul>
-            <li>Intuitive and user-friendly interface</li>
-            <li>Flexible customization options to suit your workflow</li>
-            <li>Secure and reliable data storage</li>
-            <li>Efficient team collaboration features</li>
-            <li>Regular updates and customer support</li>
-            <!-- Add more reasons as needed -->
-        </ul>
-      
+        <h1>Contact Us</h1>
+        <p>If you have any questions, feedback, or inquiries about our task manager application, please don't hesitate to contact us. We're here to help!</p>
+        <p>Email: info@taskmanager.com</p>
+        <p>Phone: +123-456-7890</p>
     </div>
 </section>
 </body>
 <style>
   #about {
-    padding: 80px 0;
+    padding: 10%;
     background-color:transparent;
     backdrop-filter: blur(10px); /* Apply blur effect */
 
