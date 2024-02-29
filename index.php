@@ -91,6 +91,13 @@
     </div>
 </body>
 <style>
+       @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
+*{
+    font-family: "Anta", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
     h1{
         color: aqua;
         padding: 20px;
@@ -106,7 +113,7 @@
 	justify-content: center;
 	align-items: center;
 	min-height: 100vh;
-	font-family: 'Jost', sans-serif;
+	font-family: 'Anta', sans-serif;
 	background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
 }
 .main{

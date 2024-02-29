@@ -53,6 +53,14 @@
 </section>
 </body>
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
+    *{
+        font-family: "Anta", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
   #about {
     padding: 80px 0;
     background-color:transparent;

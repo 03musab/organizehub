@@ -1,149 +1,301 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const taskForm = document.getElementById('task-form');
-    const taskInput = document.getElementById('task-input');
-    const taskList = document.getElementById('task-list');
+// Abstract class for TodoItemFormatter
+class TodoItemFormatter {
+  formatTask(task) {
+    return task.length > 14 ? task.slice(0, 14) + "..." : task;
+  }
 
-    // Fetch tasks when the page loads
-    fetchTasks();
+  formatDueDate(dueDate) {
+    return dueDate || "No due date";
+  }
 
-    // Add task
-    taskForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        const taskText = taskInput.value.trim();
-        if (taskText !== '') {
-            saveTask('', taskText); // Save task without ID (add new task)
-            const taskItem = createTaskItem('', taskText); // Pass empty ID for new task
-            taskList.appendChild(taskItem);
-            taskInput.value = '';
+  formatStatus(completed) {
+    return completed ? "Completed" : "Pending";
+  }
+}
+
+// Class responsible for managing Todo items
+class TodoManager {
+  constructor(todoItemFormatter) {
+    this.todos = JSON.parse(localStorage.getItem("todos")) || [];
+    this.todoItemFormatter = todoItemFormatter;
+  }
+
+  addTodo(task, dueDate) {
+    const newTodo = {
+      id: this.getRandomId(),
+      task: this.todoItemFormatter.formatTask(task),
+      dueDate: this.todoItemFormatter.formatDueDate(dueDate),
+      completed: false,
+      status: "pending",
+    };
+    this.todos.push(newTodo);
+    this.saveToLocalStorage();
+    return newTodo;
+  }
+
+  editTodo(id, updatedTask) {
+      const todo = this.todos.find((t) => t.id === id);
+      if (todo) {
+        todo.task = updatedTask;
+        this.saveToLocalStorage();
+      }
+      return todo;
+    }
+  
+    deleteTodo(id) {
+      this.todos = this.todos.filter((todo) => todo.id !== id);
+      this.saveToLocalStorage();
+    }
+  
+    toggleTodoStatus(id) {
+      const todo = this.todos.find((t) => t.id === id);
+      if (todo) {
+        todo.completed = !todo.completed;
+        this.saveToLocalStorage();
+      }
+    }
+  
+    clearAllTodos() {
+      if (this.todos.length > 0) {
+        this.todos = [];
+        this.saveToLocalStorage();
+      }
+    }
+  
+    filterTodos(status) {
+      switch (status) {
+        case "all":
+          return this.todos;
+        case "pending":
+          return this.todos.filter((todo) => !todo.completed);
+        case "completed":
+          return this.todos.filter((todo) => todo.completed);
+        default:
+          return [];
+      }
+    }
+  
+    getRandomId() {
+      return (
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15)
+      );
+    }
+  
+    saveToLocalStorage() {
+      localStorage.setItem("todos", JSON.stringify(this.todos));
+    }
+}
+
+// Class responsible for managing the UI and handling events
+class UIManager {
+  constructor(todoManager, todoItemFormatter) {
+    this.todoManager = todoManager;
+    this.todoItemFormatter = todoItemFormatter;
+    this.taskInput = document.querySelector("input");
+    this.dateInput = document.querySelector(".schedule-date");
+    this.addBtn = document.querySelector(".add-task-button");
+    this.todosListBody = document.querySelector(".todos-list-body");
+    this.alertMessage = document.querySelector(".alert-message");
+    this.deleteAllBtn = document.querySelector(".delete-all-btn");
+
+  this.addEventListeners();
+  this.showAllTodos();
+  }
+
+  addEventListeners() {
+      // Event listener for adding a new todo
+      this.addBtn.addEventListener("click", () => {
+          this.handleAddTodo();
+      });
+
+      // Event listener for pressing Enter key in the task input
+      this.taskInput.addEventListener("keyup", (e) => {
+          if (e.keyCode === 13 && this.taskInput.value.length > 0) {
+              this.handleAddTodo();
+          }
+      });
+
+      // Event listener for deleting all todos
+      this.deleteAllBtn.addEventListener("click", () => {
+          this.handleClearAllTodos();
+      });
+
+      // Event listeners for filter buttons
+      const filterButtons = document.querySelectorAll(".todos-filter li");
+      filterButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+              const status = button.textContent.toLowerCase();
+              this.handleFilterTodos(status);
+          });
+      });
+  }
+
+  handleAddTodo() {
+    const task = this.taskInput.value;
+    const dueDate = this.dateInput.value;
+    if (task === "") {
+      this.showAlertMessage("Please enter a task", "error");
+    } else {
+      const newTodo = this.todoManager.addTodo(task, dueDate);
+      this.showAllTodos();
+      this.taskInput.value = "";
+      this.dateInput.value = "";
+      this.showAlertMessage("Task added successfully", "success");
+    }
+  }
+
+  handleClearAllTodos() {
+    this.todoManager.clearAllTodos();
+    this.showAllTodos();
+    this.showAlertMessage("All todos cleared successfully", "success");
+  }
+
+  showAllTodos() {
+    const todos = this.todoManager.filterTodos("all");
+    this.displayTodos(todos);
+  }
+
+  displayTodos(todos) {
+
+      this.todosListBody.innerHTML = "";
+      
+      if (todos.length === 0) {
+          this.todosListBody.innerHTML = `<tr><td colspan="5" class="text-center">No task found</td></tr>`;
+          return;
         }
-    });
-
-    // Create task item
-    function createTaskItem(id, text) {
-        const taskItem = document.createElement('li');
-        taskItem.classList.add('task-item');
-
-        // Set task ID and original text as data attributes
-        taskItem.setAttribute('data-id', id);
-        taskItem.setAttribute('data-original-text', text);
-
-        // Create task text element
-        const taskTextElement = document.createElement('span');
-        taskTextElement.textContent = text;
-        taskItem.appendChild(taskTextElement);
-
-        // Create edit button
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.classList.add('edit');
-        editButton.addEventListener('click', function () {
-            const newText = prompt('Enter new task text:', taskTextElement.textContent);
-            if (newText !== null) {
-                taskTextElement.textContent = newText;
-                const taskId = taskItem.getAttribute('data-id'); // Get task ID from data attribute of task item
-                saveEditedTask(taskId, newText); // Save edited task to database
-            }
-        });
-        taskItem.appendChild(editButton);
-
-        // Create delete button
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', function () {
-            const confirmDelete = confirm('Are you sure you want to delete this task?');
-            if (confirmDelete) {
-                taskItem.remove();
-                const taskId = taskItem.getAttribute('data-id'); // Get task ID from data attribute
-                deleteTask(taskId); // Delete task from database
-            }
-        });
-        taskItem.appendChild(deleteButton);
-
-        return taskItem;
+        
+      todos.forEach((todo) => {
+        this.todosListBody.innerHTML += `
+          <tr class="todo-item" data-id="${todo.id}">
+            <td>${this.todoItemFormatter.formatTask(todo.task)}</td>
+            <td>${this.todoItemFormatter.formatDueDate(todo.dueDate)}</td>
+            <td>${this.todoItemFormatter.formatStatus(todo.completed)}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" onclick="uiManager.handleEditTodo('${
+                todo.id
+              }')">
+                <i class="bx bx-edit-alt bx-bx-xs"></i>    
+              </button>
+              <button class="btn btn-success btn-sm" onclick="uiManager.handleToggleStatus('${
+                todo.id
+              }')">
+                <i class="bx bx-check bx-xs"></i>
+              </button>
+              <button class="btn btn-error btn-sm" onclick="uiManager.handleDeleteTodo('${
+                todo.id
+              }')">
+                <i class="bx bx-trash bx-xs"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
     }
+    
 
-    // Fetch tasks from the server
-    function fetchTasks() {
-        fetch('get_tasks.php')
-            .then(response => response.json())
-            .then(tasks => {
-                tasks.forEach(task => {
-                    const taskItem = createTaskItem(task.id, task.task_text);
-                    taskList.appendChild(taskItem);
-                });
-            })
-            .catch(error => console.error('Error fetching tasks:', error));
-    }
+  
+handleEditTodo(id) {
+  const todo = this.todoManager.todos.find((t) => t.id === id);
+  if (todo) {
+    this.taskInput.value = todo.task;
+    this.todoManager.deleteTodo(id);
 
-    // Save task to database
-    function saveTask(id, taskText) {
-        // Construct the request body
-        const requestBody = {
-            id: id,
-            task_text: taskText
-        };
+    const handleUpdate = () => {
+      this.addBtn.innerHTML = "<i class='bx bx-plus bx-sm'></i>";
+      this.showAlertMessage("Todo updated successfully", "success");
+      this.showAllTodos();
+      this.addBtn.removeEventListener("click", handleUpdate);
+    };
 
-        // Send a POST request to the server to save the task
-        fetch('save_task.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to save task');
-            }
-            return response.json(); // Parse the response body as JSON
-        })
-        .then(data => {
-            console.log('Task saved successfully:', data);
-            location.reload(); // Reload the page after the task is saved
-
-            // Handle any additional logic after saving the task if needed
-        })
-        .catch(error => {
-            console.error('Error saving task:', error);
-            // Handle errors gracefully
-        });
-    }
-
-    // Save edited task to database
-    // Save edited task to database
-function saveEditedTask(id, newText) {
-    fetch('edit_task.php', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id: id, task_text: newText })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to save edited task');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Task edited successfully:', data);
-    })
-    .catch(error => {
-        console.error('Error saving edited task:', error);
-    });
+    this.addBtn.innerHTML = "<i class='bx bx-check bx-sm'></i>";
+    this.addBtn.addEventListener("click", handleUpdate);
+  }
 }
 
 
-    // Delete task from database
-    function deleteTask(id) {
-        fetch('delete_task.php?id=' + id, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Task with ID', id, 'deleted from database');
-                } else {
-                    console.error('Error deleting task with ID', id, 'from database:', response.status);
-                }
-            })
-            .catch(error => console.error('Error deleting task with ID', id, 'from database:', error));
-    }
-});
+handleToggleStatus(id) {
+this.todoManager.toggleTodoStatus(id);
+this.showAllTodos();
+}
+
+handleDeleteTodo(id) {
+this.todoManager.deleteTodo(id);
+this.showAlertMessage("Todo deleted successfully", "success");
+this.showAllTodos();
+}
+
+
+handleFilterTodos(status) {
+  const filteredTodos = this.todoManager.filterTodos(status);
+  this.displayTodos(filteredTodos);
+}
+
+
+showAlertMessage(message, type) {
+const alertBox = `
+  <div class="alert alert-${type} shadow-lg mb-2 w-full">
+    <div>
+      <span>${message}</span>
+    </div>
+  </div>
+`;
+this.alertMessage.innerHTML = alertBox;
+this.alertMessage.classList.remove("hide");
+this.alertMessage.classList.add("show");
+setTimeout(() => {
+  this.alertMessage.classList.remove("show");
+  this.alertMessage.classList.add("hide");
+}, 1000);
+}
+}
+
+// Class responsible for managing the theme switcher
+class ThemeSwitcher {
+constructor(themes, html) {
+  this.themes = themes;
+  this.html = html;
+  this.init();
+}
+
+init() {
+  const theme = this.getThemeFromLocalStorage();
+  if (theme) {
+    this.setTheme(theme);
+  }
+
+  this.addThemeEventListeners();
+}
+
+addThemeEventListeners() {
+  this.themes.forEach((theme) => {
+    theme.addEventListener("click", () => {
+      const themeName = theme.getAttribute("theme");
+      this.setTheme(themeName);
+      this.saveThemeToLocalStorage(themeName);
+    });
+  });
+}
+
+setTheme(themeName) {
+  this.html.setAttribute("data-theme", themeName);
+}
+
+saveThemeToLocalStorage(themeName) {
+  localStorage.setItem("theme", themeName);
+}
+
+getThemeFromLocalStorage() {
+  return localStorage.getItem("theme");
+}
+}
+
+
+
+// Instantiating the classes
+const todoItemFormatter = new TodoItemFormatter();
+const todoManager = new TodoManager(todoItemFormatter);
+const uiManager = new UIManager(todoManager, todoItemFormatter);
+const themes = document.querySelectorAll(".theme-item");
+const html = document.querySelector("html");
+const themeSwitcher = new ThemeSwitcher(themes, html);
