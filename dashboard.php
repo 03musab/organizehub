@@ -45,14 +45,26 @@
         <header>
             <h1>Todo List</h1>
             <!-- Error message -->
-            <div class="alert-message"></div>
             <div class="input-section">
                 <input type="text" placeholder="Add a todo . . ." class="input input-bordered input-secondary w-full max-w-xs" />
                 <input type="date" placeholder="Due date?"class="input input-bordered input-secondary w-full max-w-xs schedule-date" />
-                <button class="btn btn-secondary add-task-button">
+                <select id="priorityDropdown" class="input input-bordered input-secondary  w-full max-w-xs">
+                    <option value="N/A">No priority</option>
+                    <option value="1">Low</option>
+                    <option value="2">Medium</option>
+                    <option value="3">High</option>
+                </select>
+                <button id="btnaddtsk"class="btn btn-secondary add-task-button">
                     <i class="bx bx-plus bx-sm"></i>
                 </button>
             </div>
+            <div>
+                <p>
+                    <br>
+                </p>
+            </div>
+            <div class="alert-message"></div>
+
         </header>
 
         <div class="todos-filter">
@@ -77,6 +89,7 @@
                     <th>Task</th>
                     <th>Due Date</th>
                     <th>Status</th>
+                    <th>Priority</th>
                     <th>Actions</th>
                 </tr>
             </thead>

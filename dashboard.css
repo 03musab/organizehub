@@ -229,6 +229,36 @@ a {
     margin: 20px auto;
     padding: 20px;
 }
+/* Add this CSS code to your existing stylesheet */
+
+/* Styles for the priority column */
+.todos-list th:nth-child(4),
+.todos-list td:nth-child(4) {
+    text-align: center;
+    
+}
+
+.todos-list th:nth-child(4) {
+    width: 100px; 
+}
+
+.todos-list td:nth-child(4) {
+    font-weight: bold;
+}
+
+/* Styles for priority levels */
+.low-priority {
+    color: green;
+}
+
+.medium-priority {
+    color: orange;
+}
+
+.high-priority {
+    color: red;
+}
+
 /* styles.css */
 
 .note-box {
@@ -319,6 +349,7 @@ body2{
     flex-direction: column;
     width: 100%;
     margin-bottom: 20px;
+    
 }
 
 header h1 {
@@ -328,7 +359,7 @@ header h1 {
 }
 
 .alert-message {
-    width: 70%;
+    width: 60%;
     transform: scale(1);
     height: 0px;
 }
@@ -341,7 +372,6 @@ header h1 {
 .alert-message.hide {
     display: none;
 }
-
 
 
 header .input-section {
@@ -357,6 +387,7 @@ header .input-section {
 .input-section input{
     margin-right: 10px;
     max-width: 100%;
+
 }
 
 .todos-filter{
