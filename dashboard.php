@@ -54,7 +54,7 @@
                     <option value="2">Medium</option>
                     <option value="3">High</option>
                 </select>
-                <button id="btnaddtsk"class="btn btn-secondary add-task-button">
+                <button id="btnaddtsk"class="btn btn-primary add-task-button">
                     <i class="bx bx-plus bx-sm"></i>
                 </button>
             </div>
@@ -78,7 +78,7 @@
                 
             </div>
             
-            <button class="btn btn-secondary delete-all-btn">
+            <button class="btn btn-primary delete-all-btn">
                 Delete All
             </button>
         </div>
@@ -122,7 +122,7 @@
         .sticky-note {
             
             position: fixed;
-            bottom: 20px;
+            bottom: 45px;
             right: 20px;
             width: 250px;
             padding: 10px;
