@@ -1,4 +1,5 @@
-// Abstract class for TodoItemFormatter
+
+// Call the updateReminderSection function whenever necessary
 class TodoItemFormatter {
   formatTask(task) {
       return task.length > 14 ? task.slice(0, 14) + "..." : task;
@@ -171,6 +172,7 @@ class UIManager {
       const todos = this.todoManager.filterTodos("all");
       this.displayTodos(todos);
   }
+  
 
   displayTodos(todos) {
       this.todosListBody.innerHTML = "";
@@ -208,6 +210,8 @@ class UIManager {
       `;
       });
   }
+  
+
 
   handleEditTodo(id) {
       const todo = this.todoManager.todos.find((t) => t.id === id);
@@ -302,6 +306,8 @@ class ThemeSwitcher {
       return localStorage.getItem("theme");
   }
 }
+
+
 
 // Instantiating the classes
 const todoItemFormatter = new TodoItemFormatter();

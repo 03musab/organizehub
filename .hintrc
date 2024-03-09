@@ -6,6 +6,15 @@
     "defaults",
     "not ie 11",
     "not and_ff <= 118",
-    "not firefox <= 118"
-  ]
+    "not firefox <= 118",
+    "not and_chr <= 118",
+    "not chrome <= 118",
+    "not edge <= 118",
+    "not safari <= 17",
+    "not samsung <= 22"
+  ],
+  "hints": {
+    "meta-viewport": "off",
+    "compat-api/css": "off"
+  }
 }

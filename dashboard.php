@@ -15,7 +15,9 @@
                 <li><a href="dashboard.php">Home</a></li>
                 <li><a href="aboutus.php">About</a></li>
                 <li><a href="contact.php">Contact</a></li>
+                <li><a href="calendar.html">Calendar</a></li>
                 <li><a href="logout.php">Logout</a></li>
+
             </ul>
         </div>
     </nav>
@@ -36,6 +38,7 @@
     <title>Orgaizehub</title>
 </head>
 <body2>
+    
 
     <!-- Copyright -->
     
@@ -99,6 +102,8 @@
         </div>
     </div>
 
+    
+
     <!--Theme switcher-->
     <div class="theme-switcher">
         <div class="dropdown dropdown-left">
@@ -117,6 +122,7 @@
             </ul>
         </div>
     </div>
+    
     <style>
         /* CSS styling for the sticky note */
         .sticky-note {
@@ -183,6 +189,7 @@
         }
     </style>
 </head>
+    </div>
 <body>
     <div class="sticky-note">
         <textarea id="noteContent" placeholder="Type your note here..."></textarea>
@@ -191,8 +198,7 @@
             <button onclick="deleteNote()">Delete</button>
         </div>
     </div>
-
-    <script>
+       <script>
         // JavaScript functionality for saving and deleting notes
         function saveNote() {
             const noteContent = document.getElementById("noteContent").value.trim();
@@ -225,6 +231,5 @@
         });
     </script>
 <script src="dashboard.js"></script>
-
 </body2>
 </html>
