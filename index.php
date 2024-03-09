@@ -16,60 +16,6 @@
 <body>
     <div class="main">  	
         <input type="checkbox" id="chk" aria-hidden="true">
-
-        <?php
-        require_once('db.php');
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['signup'])) {
-                // Handle user signup
-                $username = $_POST['username'];
-                $email = $_POST['email'];
-                $password = $_POST['password'];
-
-                $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $stmt->bind_param("sss", $username, $email, $hashedPassword);
-
-                if ($stmt->execute()) {
-                    echo "<script>alert('Signup successful!')</script>";
-                    header("Location: dashboard.php"); 
-                    exit();
-                } else {
-                    echo "<script>alert('Signup failed. Please try again.')</script>";
-                }
-
-                $stmt->close();
-            } elseif (isset($_POST['login'])) {
-                // Handle user login
-                $email = $_POST['login_email'];
-                $password = $_POST['login_password'];
-
-                $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-                $stmt->bind_param("s", $email);
-                $stmt->execute();
-                $result = $stmt->get_result();
-
-                if ($result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    if (password_verify($password, $row['password'])) {
-                        
-                        echo "<script>alert('Login successful!')</script>";
-                        header("Location: dashboard.php"); 
-                        exit();
-                    } else {
-                        echo "<script>alert('Invalid password.')</script>";
-                    }
-                } else {
-                    echo "<script>alert('Email not found.')</script>";
-                }
-
-                $stmt->close();
-            }
-        }
-
-        $conn->close();
-        ?>
             <div class="signup">
             <form method="POST">
                 <label for="chk" aria-hidden="true">Sign up</label>
@@ -79,6 +25,61 @@
                 <button type="submit" name="signup">Sign up</button>
             </form>
         </div>
+		
+<?php
+require_once('db.php');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	if (isset($_POST['signup'])) {
+		// Handle user signup
+		$username = $_POST['username'];
+		$email = $_POST['email'];
+		$password = $_POST['password'];
+
+		$stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+		$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+		$stmt->bind_param("sss", $username, $email, $hashedPassword);
+
+		if ($stmt->execute()) {
+			echo "<script>alert('Signup successful!')</script>";
+			header("Location: dashboard.php"); 
+			exit();
+		} else {
+			echo "<script>alert('Signup failed. Please try again.')</script>";
+		}
+
+		$stmt->close();
+	} elseif (isset($_POST['login'])) {
+		// Handle user login
+		$email = $_POST['login_email'];
+		$password = $_POST['login_password'];
+
+		$stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+		$stmt->bind_param("s", $email);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+			$row = $result->fetch_assoc();
+			if (password_verify($password, $row['password'])) {
+				
+				echo "<script>alert('Login successful!')</script>";
+				header("Location: dashboard.php"); 
+				exit();
+			} else {
+				echo "<script>alert('Invalid password.')</script>";
+			}
+		} else {
+			echo "<script>alert('Email not found.')</script>";
+		}
+
+		$stmt->close();
+	}
+}
+
+$conn->close();
+?>
+
 
         <div class="login">
             <form method="POST">
