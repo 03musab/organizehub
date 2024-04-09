@@ -27,11 +27,6 @@
 				<input type="email" name="email" placeholder="Email" required="">
 				<input type="password" name="password" placeholder="Password" required="">
 				<button type="submit" name="signup">Sign up</button>
-				<div class="containergg">
-					<label1 for="signup">Or signup with:</label1>
-				</div>
-				<div class="g-signin2" data-onsuccess="onSignIn">
-				</div>
 
 			</form>
 		</div>
@@ -97,20 +92,6 @@
 				<input type="email" name="login_email" placeholder="Email" required="">
 				<input type="password" name="login_password" placeholder="Password" required="">
 				<button type="submit" name="login">Login</button>
-
-				<div class="containergg">
-					<label1 for="signup">Or signin with:</label1>
-				</div>
-				<div class="g-signin2" data-onsuccess="onSignIn"></div>
-				<script>
-    function onSignIn(googleUser) {
-        var profile = googleUser.getBasicProfile();
-        console.log('User signed in');
-    
-        window.location.href = 'dashboard.php';
-    }
-</script>
-
 			</form>
 		</div>
 </body>

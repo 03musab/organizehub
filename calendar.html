@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organize hub</title>
+    
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <h1>
+                <img src="12.jpg" alt="Logo">
+            </h1>
+            <ul>
+                <li><a href="dashboard.php">Home</a></li>
+                <li><a href="aboutus.php">About</a></li>
+                <li><a href="contact.php">Contact</a></li>
+                <li><a href="calendar.html">Calendar</a></li>
+                <li><a href="logout.php">Logout</a></li>
+
+
+            </ul>
+        </div>
+    </nav>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+  
+      * {
+          font-family: "Anta", sans-serif;
+          font-weight: 400;
+          font-style: normal;
+      }
+  
+      body {
+          margin: 0;
+          padding: 0;
+          height: 100vh;
+          width: 100%;
+          background-image: url("bg.jpg");
+          background-position: center;
+          background-size: cover;
+      }
+  
+      nav .container h1 img {
+          width: 80px;
+          /* Adjust width as needed */
+          height: 80px;
+          /* Adjust height as needed */
+          border-radius: 50%;
+          /* Make the image round */
+          margin-right: 10px;
+          /* Add some spacing between the image and text */
+          display: flex;
+  
+  
+      }
+  
+      nav {
+          background-color: rgba(51, 51, 51, 0.5);
+          color: #fff;
+          backdrop-filter: blur(10px);
+          background-size: cover;
+          background-repeat: no-repeat;
+          border-bottom: 2px solid #fff;
+      }
+  
+      .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+  
+      }
+  
+      h1 {
+          margin: 0;
+      }
+  
+      ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+      }
+  
+      li {
+          display: inline;
+          margin-left: 20px;
+      }
+  
+      a {
+          text-decoration: none;
+          color: #fff;
+      }
+  </style>
+  </body>
+  
+</html>
+<!DOCTYPE html>
+<html1>
+
+<head1>
+  <title>Google Calendar API Quickstart</title>
+  <meta charset="utf-8" />
+  <style>/* Reset default margin and padding */
+    body, h1, p, button, input, textarea, label, form {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Body styles */
+    .body1 {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f0f0f0;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    
+    /* Title styles */
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    /* Button container styles */
+    .button-container {
+      margin-bottom: 20px;
+    }
+    
+    /* Button styles */
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #000000;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 10px 10px;
+    }
+    
+    button:hover {
+      background-color: #51ff00;
+    }
+    
+    /* Form styles */
+    form {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    fieldset {
+      border: rgb(255, 255, 255);
+    }
+    
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    textarea {
+      resize: vertical;
+    }
+    
+    /* Button inside form */
+    button[type="button"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    
+    /* Preformatted text */
+    pre {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.1); /* Add box shadow for depth */
+  font-family: 'Courier New', Courier, monospace; /* Use monospace font for code readability */
+  font-size: 15px; /* Adjust font size for better readability */
+  line-height: 1.5; /* Increase line height for better spacing */
+  overflow-x: auto;
+  max-width: 100%;
+    }
+
+    
+  </style>
+</head>
+
+<body1>
+  <p>Google Calendar</p>
+
+  <!--Add buttons to initiate auth sequence and sign out-->
+  <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
+  <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
+  <br />
+  <form id="event_form">
+    <fieldset>
+      <input type="text" name="title" id="title" placeholder="Add Title" class="input-title" />
+      <br />
+      <textarea type="text" name="desc" id="desc" placeholder="Add Descreption" class="input-title"></textarea>
+      <br />
+      <label>Date</label>
+      <input type="date" name="date" id="date" />
+      <div>
+        <label>Start Time</label>
+        <input type="time" name="st" id="st" />
+        <label>End Time</label>
+        <input type="time" name="et" id="et" />
+      </div>
+      <button type="button" onclick="addEvent()">Schedule</button>
+    </fieldset>
+  </form>
+  <pre id="content" style="white-space: pre-wrap;"></pre>
+  <script src="calendar.js" type="text/javascript"></script>
+  <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+  <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body1>
+
+</html1>

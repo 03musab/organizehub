@@ -30,7 +30,7 @@
             <h1>Contact Us</h1>
             <p>If you have any questions, feedback, or inquiries about our task manager application, please don't hesitate to contact us. We're here to help!</p>
             <p>Email: info@taskmanager.com</p>
-            <p>Phone: +123-456-7890</p>
+            <p>Phone: +91 1234567890</p>
         </div>
     </section>
 </body>

@@ -17,7 +17,7 @@
                 <li><a href="dashboard.php">Home</a></li>
                 <li><a href="aboutus.php">About</a></li>
                 <li><a href="contact.php">Contact</a></li>
-                <li><a href="dynamic-full-calendar.html">Calendar</a></li>
+                <li><a href="calendar.html">Calendar</a></li>
                 <li><a href="logout.php">Logout</a></li>
 
             </ul>
