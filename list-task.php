@@ -1,4 +1,17 @@
+<?php
+include ('config/constants.php');
+//Get the listid from URL
+session_start();
 
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+} else {
+    $user_id = '';
+    header('location:index.php');
+}
+;
+$list_id_url = $_GET['list_id'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <style>
@@ -30,6 +43,7 @@
         border-radius: 50%;
         /* Make it round */
     }
+
 
     /* Main wrapper */
     .wrapper {
@@ -136,7 +150,7 @@
     }
 
     body {
-        display:grid;
+        display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -146,13 +160,14 @@
     }
 
     .sidebar {
-         z-index: 1;
+        z-index: 1;
         position: fixed;
-        width: 250px;
-        left: -250px;
+        width: 240px;
+        left: -240px;
         height: 100%;
         background-color: #fff;
         transition: all .5s ease;
+
     }
 
     .sidebar header {
@@ -250,6 +265,8 @@
             width: 70px;
             left: 0;
             margin: 100px 0;
+            z-index: 100; /* Lower z-index value */
+
         }
 
         header,
@@ -312,6 +329,15 @@
         font-family: 'Lato', sans-serif;
         margin: 0;
         color: #a759f5;
+    }
+
+    p {
+        font-family: 'Lato', sans-serif;
+        font-weight: 300;
+        text-align: center;
+        font-size: 30px;
+        color: #8000ff;
+        margin: 0;
     }
 
     /* Imported font */
@@ -464,17 +490,49 @@
         min-height: 100vh;
         /* Minimum height of viewport */
         width: 100%;
-        background-image: url("bg.jpg");
+        background: linear-gradient(to bottom, #0d0d5c, #00c1c1, #0d0d5c);
         background-position: center;
         background-size: cover;
         overflow-y: auto;
         /* Always show scrollbar */
     }
-    
+    .logout-button {
+    position: absolute;
+    top: 45px; /* Adjust top position as needed */
+    left: 1120px; /* Adjust right position as needed */
+    padding: 10px 20px;
+    background-color: #ffdf00; /* Electric Yellow */
+    color: black; /* Example color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.logout-button {
+    background-color: #ffdf00; /* Electric Yellow */
+    /* Add other button styles */
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+
+}
+
+/* Hover Effect */
+.logout-button:hover {
+    background-color: #ffad29; /* Darker shade of Electric Yellow */
+}
 </style>
 </head>
 <body>
-    
+<div class="container">
+    <button class="logout-button" id="logoutBtn">Logout</button>
+</div>
+
+<script>
+    document.getElementById("logoutBtn").addEventListener("click", function() {
+        window.location.href = "user_logout.php";
+    });
+</script>
+    <div class="logo">
+        <img src="og.jpg" alt="Logo">
+    </div>
 
     <input type="checkbox" id="check">
     <label for="check">
@@ -483,7 +541,6 @@
     </label>
     <div class="sidebar">
         <header>Menu</header>
-       
         <a href="taskmanager.php">
             <i class="fas fa-qrcode"></i>
             <span>Task manager</span>
@@ -505,288 +562,139 @@
             <span>LogOut</span>
         </a>
     </div>
-</body>
-    <style>
-    /* Imported font */
-@import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 
-/* Reset styles */
-* {
-    margin: 0;
-    padding: 0;
-    font-family: "Anta", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
+    <div class="wrapper">
 
-/* Navigation */
-nav {
-    background-color: rgba(51, 51, 51, 0.5);
-    color: #fff;
-    backdrop-filter: blur(10px); /* Apply blur effect */
-    background-size: cover; 
-    background-repeat: no-repeat; 
-    border-bottom: 2px solid #fff; 
-}
 
-nav .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        <!-- Menu Starts Here -->
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
 
-nav .container h1 img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-right: 10px;
-    display: flex;
-}
+                <a href="taskmanager.php" style="text-decoration: none;"><button class="nav-link active" id="nav-home-tab"
+                        data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab"
+                        aria-controls="nav-home" aria-selected="true"><b>All Tasks</b></button></a>
 
-/* Navigation links */
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
+                <?php
 
-li {
-    display: inline;
-    margin-left: 20px;
-}
+                //Comment Displaying Lists From Database in ourMenu
+                $conn2 = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD) or die(mysqli_error());
 
-a {
-    text-decoration: none;
-    color: #fff;
-}
+                //SELECT DATABASE
+                $db_select2 = mysqli_select_db($conn2, DB_NAME) or die(mysqli_error());
 
-/* Responsive small navigation */
-.small-navbar {
-    background-color: #000000;
-    color: #fff;
-}
+                //Query to Get the Lists from database
+                $sql2 = "SELECT * FROM tbl_lists";
 
-.small-navbar .container {
-    display: flex;
-    justify-content: end;
-    align-items: center;
-}
+                //Execute Query
+                $res2 = mysqli_query($conn2, $sql2);
 
-.small-navbar ul li {
-    display: inline-block; 
-}
+                //CHeck whether the query executed or not
+                if ($res2 == true) {
+                    //Display the lists in menu
+                    while ($row2 = mysqli_fetch_assoc($res2)) {
+                        $list_id = $row2['list_id'];
+                        $list_name = $row2['list_name'];
+                        ?>
+                        <div class="px-3"></div>
 
-.small-navbar ul li a {
-    display: block;
-    padding: 10px 20px;
-    text-decoration: none;
-    color: #fff;
-}
 
-.small-navbar ul li a:hover {
-    background-color: #555;
-}
+                        <a href="<?php echo SITEURL; ?>list-task.php?list_id=<?php echo $list_id; ?>"
+                            style="text-decoration: none;"><button class="nav-link active" id="nav-home-tab"
+                                data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab"
+                                aria-controls="nav-home" aria-selected="true"><b><?php echo $list_name; ?></b></button></a>
 
-/* Container for content */
-.container2 {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.7);
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
+                        <?php
 
-.container2 h2 {
-    font-size: 2.5rem;
-    margin-bottom: 30px;
-    color: black;
-}
+                    }
+                }
 
-.container2 h3 {
-    font-size: 1.8rem;
-    margin-top: 40px;
-    color: black;
-}
+                ?>
+              
+        </nav>
+        <!-- Menu Ends Here -->
+        <div><br></div>
+        <a href="<?php echo SITEURL; ?>add-task.php"><button class="btn btn-dark">Add Task</button></a>
+        <div><br><div>
+        <div class="all-task">
 
-.container2 p {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: black;
-}
 
-.container2 ul {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 20px;
-}
 
-.container2 ul li {
-    margin-bottom: 10px;
-}
+            <table class="table table-hover table-dark">
 
-.container2 ul li:before {
-    content: "\2022";
-    color: #333;
-    font-size: 1.2rem;
-    margin-right: 10px;
-}
+                <tr>
+                    <th>S.N.</th>
+                    <th>Task Name</th>
+                    <th>Priority</th>
+                    <th>Deadline</th>
+                    <th>Actions</th>
+                </tr>
 
-.container2 p:last-child {
-    margin-top: 40px;
-}
+                <?php
 
-.container2 p:last-child a {
-    color: #007bff;
-    text-decoration: none;
-}
+                $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD) or die(mysqli_error());
 
-.container2 p:last-child a:hover {
-    text-decoration: underline;
-}
+                $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error());
 
-/* Background image */
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh; /* Minimum height of viewport */
-    width: 100%;
-    background:linear-gradient(to bottom , #000000,rgb(32, 32, 32), #4c2cff, #5200af);
-    background-position: center;
-    background-size: cover;
-    overflow-y: auto; /* Always show scrollbar */
-}
-     body, h1, p, button, input, textarea, label, form {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    /* Body styles */
-    .body1 {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      background-color: #f0f0f0;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      position: relative;
-    }
-    
-    /* Title styles */
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    
-    /* Button container styles */
-    .button-container {
-      margin-bottom: 20px;
-    }
-    
-    /* Button styles */
-    button {
-      padding: 10px 5px;
-      border: none;
-      border-radius: 5px;
-      background-color: #007bff;
-      color: #000000;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      margin: 5px 5px;
-    }
-    
-    button:hover {
-      background-color: #51ff00;
-    }
-    
-    /* Form styles */
-    form {
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    
-    fieldset {
-      border: rgb(255, 255, 255);
-    }
-    
-    input[type="text"],
-    input[type="date"],
-    input[type="time"],
-    textarea {
-      width: 100%;
-      padding: 5px;
-      margin: 5px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    
-    textarea {
-      resize: vertical;
-    }
-    
-    /* Button inside form */
-    button[type="button"] {
-      display: block;
-      width: 50%;
-      padding: 10px;
-      margin-top: 20px;
-    }
-    
-    pre {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 15px;
-        box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.1); /* Add box shadow for depth */
-        font-family: 'Courier New', Courier, monospace; /* Use monospace font for code readability */
-        font-size: 15px; /* Adjust font size for better readability */
-        line-height: 1.5; /* Increase line height for better spacing */
-        overflow-x: auto;
-        max-width: 100%;
-        position: absolute; /* Set position to absolute */
-        top: 95px; /* Adjust top position */
-        right: 20px; /* Adjust right position */
-    }
-  </style>
-</head>
+                //SQL QUERY to display tasks by list selected
+                $sql = "SELECT * FROM tbl_tasks WHERE list_id=$list_id_url and user_id = $user_id";
 
-<body>
-  <h2>Google Events</h2>
+                //Execute Query
+                $res = mysqli_query($conn, $sql);
 
-  <!--Add buttons to initiate auth sequence and sign out-->
-  <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
-  <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
-  <br />
-  <form id="event_form">
-    <fieldset>
-      <input type="text" name="title" id="title" placeholder="Add Title" class="input-title" />
-      <br />
-      <textarea type="text" name="desc" id="desc" placeholder="Add Descreption" class="input-title"></textarea>
-      <br />
-      <label>Date</label>
-      <input type="date" name="date" id="date" />
-      <div>
-        <label>Start Time</label>
-        <input type="time" name="st" id="st" />
-        <label>End Time</label>
-        <input type="time" name="et" id="et" />
-      </div>
-      <button type="button" onclick="return confirm('Event saved to Google Calendar !'); addEvent();">Schedule</button>
-    </fieldset>
-  </form>
-  <pre id="content" style="white-space: pre-wrap;"></pre>
-  <script src="calendar.js" type="text/javascript"></script>
-  <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-  <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+                if ($res == true) {
+                    //Display the tasks based on list
+                    //Count the Rows
+                    $count_rows = mysqli_num_rows($res);
+                    $sn = 1;
+                    if ($count_rows > 0) {
+                        //We have tasks on this list
+                        while ($row = mysqli_fetch_assoc($res)) {
+                            $task_id = $row['task_id'];
+                            $task_name = $row['task_name'];
+                            $priority = $row['priority'];
+                            $deadline = $row['deadline'];
+                            ?>
+
+                            <tr>
+                                <td><?php echo $sn++; ?>.</td>
+                                <td><?php echo $task_name; ?></td>
+                                <td><?php echo $priority; ?></td>
+                                <td><?php echo $deadline; ?></td>
+                                <td>
+                                    <a href="<?php echo SITEURL; ?>update-task.php?task_id=<?php echo $task_id; ?>"
+                                        style="text-decoration:none;">
+                                        <div class="btn btn-success btn-sm">Update</div>
+                                    </a>
+
+                                    <a href="<?php echo SITEURL; ?>delete-task.php?task_id=<?php echo $task_id; ?>"
+                                        style="text-decoration:none;">
+                                        <div class="btn btn-danger btn-sm">Delete</div>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <?php
+                        }
+                    } else {
+                        //NO Tasks on this list
+                        ?>
+
+                        <tr>
+                            <td colspan="5">No Tasks added on this list.</td>
+                        </tr>
+
+                        <?php
+                    }
+                }
+                ?>
+
+
+
+            </table>
+
+        </div>
+
+    </div>
 </body>
 
 </html>

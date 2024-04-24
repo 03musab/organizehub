@@ -5,5 +5,3 @@ CREATE TABLE Users (
     Email VARCHAR(100) NOT NULL UNIQUE
 );
 
-
-//npm install fullcalendar

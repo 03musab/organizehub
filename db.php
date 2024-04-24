@@ -1,12 +1,13 @@
+
 <?php
-$servername = "localhost"; // e.g., "localhost"
-$username = "root";
-$password = "musab";
-$dbname = "organizehub";
+$db_name = 'mysql:host=localhost;dbname=task_manager';
+$user_name = 'root';
+$user_password = '';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $conn = new PDO($db_name, $user_name, $user_password);
+    // Set PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
 }
 ?>
