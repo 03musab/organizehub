@@ -627,7 +627,7 @@ If you found OrganizeHub helpful, please consider:
 
 <div align="center">
 
-**Made with ❤️ by the OrganizeHub Team**
+**Made with ❤️ Musab**
 
 [![GitHub Stars](https://img.shields.io/github/stars/03musab/organizehub?style=social)](https://github.com/03musab/organizehub)
 [![GitHub Forks](https://img.shields.io/github/forks/03musab/organizehub?style=social)](https://github.com/03musab/organizehub)
