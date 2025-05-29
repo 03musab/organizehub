@@ -7,583 +7,532 @@ if (isset($_SESSION['user_id'])) {
 } else {
     $user_id = '';
     header('location:index.php');
-    exit(); // Stop further execution
+    exit();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<style>
-    /* Reset styles */
-    /* Hide the specific element */
-    .a {
-        display: none;
-    }
-
-    /* Reset all margins, padding, and set font family to verdana */
-    * {
-        margin: 0;
-        padding: 0;
-        font-family: verdana;
-    }
-
-    .logo {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 20px;
-    }
-
-    .logo img {
-        width: 100px;
-        /* Adjust the size as needed */
-        height: 100px;
-        /* Adjust the size as needed */
-        border-radius: 50%;
-        /* Make it round */
-    }
-
-    /* Main wrapper */
-    .wrapper {
-        width: 70%;
-        margin: 0 auto 2%;
-    }
-
-    /* Headings */
-    h1 {
-        color: #a00000;
-        margin-bottom: 2%;
-    }
-
-    h3 {
-        margin: 2% 0;
-    }
-
-    /* Navigation menu */
-    .menu {
-        margin-bottom: 2%;
-    }
-
-    .menu a {
-        font-weight: bold;
-        margin-right: 1%;
-        color: black;
-        text-decoration: none;
-    }
-
-    .menu a:hover {
-        text-decoration: underline;
-    }
-
-    /* Buttons */
-    .btn-primary,
-    .btn-secondary {
-        padding: 5px;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .btn-primary {
-        background-color: #26de81;
-        color: black;
-    }
-
-    .btn-primary:hover {
-        background-color: #20bf6b;
-    }
-
-    .btn-secondary {
-        background-color: #778ca3;
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background-color: #4b6584;
-    }
-
-    .btn-lg {
-        width: 50%;
-    }
-
-    /* Tables */
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .table th,
-    .table td {
-        padding: 1%;
-    }
-
-    .table th {
-        text-align: left;
-        border-bottom: 1px solid black;
-    }
-
-    /* Additional styles */
-    .tbl-half {
-        width: 40%;
-    }
-</style>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organize hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        text-decoration: none;
-    }
+    <title>OrganizeHub - Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #f1f5f9;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
 
-    :root {
-        --accent-color: #fff;
-        --gradient-color: #FBFBFB;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100vw;
-        height: 100vh;
-        background-image: linear-gradient(-45deg, #e3eefe 0%, #efddfb 100%);
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
 
-    .sidebar {
-         z-index: 1;
-        position: fixed;
-        width: 250px;
-        left: -250px;
-        height: 100%;
-        background-color: #fff;
-        transition: all .5s ease;
-    }
-
-    .sidebar header {
-        font-size: 28px;
-        color: #353535;
-        line-height: 70px;
-        text-align: center;
-        background-color: #fff;
-        user-select: none;
-        font-family: 'Lato', sans-serif;
-    }
-
-    .sidebar a {
-        display: block;
-        height: 65px;
-        width: 100%;
-        color: #353535;
-        line-height: 65px;
-        padding-left: 30px;
-        box-sizing: border-box;
-        border-left: 5px solid transparent;
-        font-family: 'Lato', sans-serif;
-        transition: all .5s ease;
-    }
-
-    a.active,
-    a:hover {
-        border-left: 5px solid var(--accent-color);
-        color: #fff;
-        background: linear-gradient(to left, var(--accent-color), var(--gradient-color));
-    }
-
-    .sidebar a i {
-        font-size: 23px;
-        margin-right: 16px;
-    }
-
-    .sidebar a span {
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-
-    #check {
-        display: none;
-    }
-
-    label #btn,
-    label #cancel {
-        position: absolute;
-        top: 0px;
-        /* Adjust top position as needed */
-        left: 0px;
-        cursor: pointer;
-        color: #5c004c;
-        border-radius: 5px;
-        margin: 15px 30px;
-        font-size: 29px;
-        background-color: #e8d1ff;
-        box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
-            inset -7px -7px 10px 0px rgba(0, 0, 0, .1),
-            3.5px 3.5px 20px 0px rgba(0, 0, 0, .1),
-            2px 2px 5px 0px rgba(0, 0, 0, .1);
-        height: 45px;
-        width: 45px;
-        text-align: center;
-        text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.5);
-        line-height: 45px;
-        transition: all .5s ease;
-    }
-
-    label #cancel {
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    #check:checked~.sidebar {
-        left: 0;
-    }
-
-    #check:checked~label #btn {
-        margin-left: 245px;
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    #check:checked~label #cancel {
-        margin-left: 245px;
-        opacity: 1;
-        visibility: visible;
-    }
-
-    @media(max-width : 860px) {
+        /* Enhanced Sidebar */
         .sidebar {
-            height: auto;
-            width: 70px;
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-primary);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar.active {
             left: 0;
-            margin: 100px 0;
         }
 
-        header,
-        #btn,
-        #cancel {
-            display: none;
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
         }
 
-        span {
-            position: absolute;
-            margin-left: 23px;
-            opacity: 0;
-            visibility: hidden;
+        .sidebar-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
         }
 
-        .sidebar a {
-            height: 60px;
+        .sidebar-nav {
+            padding: 2rem 0;
         }
 
-        .sidebar a i {
-            margin-left: -10px;
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
         }
 
-        a:hover {
-            width: 200px;
-            background: inherit;
+        .sidebar-nav a:hover {
+            background: var(--secondary-color);
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateX(5px);
         }
 
-        .sidebar a:hover span {
-            opacity: 1;
-            visibility: visible;
+        .sidebar-nav a i {
+            width: 20px;
+            margin-right: 1rem;
+            font-size: 1.1rem;
         }
-    }
 
-    .sidebar>a.active,
-    .sidebar>a:hover:nth-child(even) {
-        --accent-color: #52d6f4;
-        --gradient-color: #c1b1f7;
-    }
+        /* Toggle Button */
+        .sidebar-toggle {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 2001;
+            background: var(--bg-primary);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s ease, left 0.3s cubic-bezier(0.4,0,0.2,1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .sidebar a.active,
-    .sidebar>a:hover:nth-child(odd) {
-        --accent-color: #c1b1f7;
-        --gradient-color: #3902ff;
-    }
+        .sidebar-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
 
+        .sidebar-toggle i {
+            font-size: 1.2rem;
+        }
 
-    .frame {
-        width: 50%;
-        height: 30%;
-        margin: auto;
-        text-align: center;
-    }
+        .sidebar-toggle.sidebar-open {
+            left: 300px;
+        }
 
-    h2 {
-        position: relative;
-        text-align: center;
-        color: #353535;
-        font-size: 60px;
-        font-family: 'Lato', sans-serif;
-        margin: 0;
-        color: #a759f5;
-    }
+        /* Main Content */
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            padding: 2rem;
+        }
 
-    /* Imported font */
-    @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+        #mainContent.sidebar-open {
+            margin-left: 280px;
+        }
 
-    /* Reset styles */
-    * {
-        margin: 0;
-        padding: 0;
-        font-family: "Anta", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-    }
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    /* Navigation */
-    nav {
-        background-color: rgba(51, 51, 51, 0.5);
-        color: #fff;
-        backdrop-filter: blur(10px);
-        /* Apply blur effect */
-        background-size: cover;
-        background-repeat: no-repeat;
-        border-bottom: 2px solid #fff;
-    }
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
 
-    nav .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
 
-    nav .container h1 img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin-right: 10px;
-        display: flex;
-    }
+        .btn-modern {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
 
-    /* Navigation links */
-    ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-    }
+        .btn-primary-modern {
+            background: var(--primary-color);
+            color: white;
+        }
 
-    li {
-        display: inline;
-        margin-left: 20px;
-    }
+        .btn-primary-modern:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
 
-    a {
-        text-decoration: none;
-        color: #fff;
-    }
+        .btn-danger-modern {
+            background: var(--danger-color);
+            color: white;
+        }
 
-    /* Responsive small navigation */
-    .small-navbar {
-        background-color: #000000;
-        color: #fff;
-    }
+        .btn-danger-modern:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
 
-    .small-navbar .container {
-        display: flex;
-        justify-content: end;
-        align-items: center;
-    }
+        /* Navigation Tabs */
+        .nav-tabs-modern {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
 
-    .small-navbar ul li {
-        display: inline-block;
-    }
+        .nav-tab-modern {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
 
-    .small-navbar ul li a {
-        display: block;
-        padding: 10px 20px;
-        text-decoration: none;
-        color: #fff;
-    }
+        .nav-tab-modern:hover,
+        .nav-tab-modern.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
 
-    .small-navbar ul li a:hover {
-        background-color: #555;
-    }
+        /* Tasks Container */
+        .tasks-container {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
 
-    /* Container for content */
-    .container2 {
-        max-width: 800px;
-        margin: 0 auto;
-        text-align: center;
-        background-color: rgba(255, 255, 255, 0.7);
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
+        /* Enhanced Table */
+        .table-modern {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
 
-    .container2 h2 {
-        font-size: 2.5rem;
-        margin-bottom: 30px;
-        color: black;
-    }
+        .table-modern thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 1rem;
+            font-weight: 600;
+            text-align: left;
+            border: none;
+        }
 
-    .container2 h3 {
-        font-size: 1.8rem;
-        margin-top: 40px;
-        color: black;
-    }
+        .table-modern tbody tr {
+            transition: all 0.2s ease;
+        }
 
-    .container2 p {
-        font-size: 1.2rem;
-        line-height: 1.6;
-        color: black;
-    }
+        .table-modern tbody tr:hover {
+            background: var(--secondary-color);
+            transform: scale(1.01);
+        }
 
-    .container2 ul {
-        list-style: none;
-        padding-left: 0;
-        margin-top: 20px;
-    }
+        .table-modern tbody td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
 
-    .container2 ul li {
-        margin-bottom: 10px;
-    }
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
 
-    .container2 ul li:before {
-        content: "\2022";
-        color: #333;
-        font-size: 1.2rem;
-        margin-right: 10px;
-    }
+        /* Priority Badges */
+        .priority-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
 
-    .container2 p:last-child {
-        margin-top: 40px;
-    }
+        .priority-high {
+            background: #fee2e2;
+            color: var(--danger-color);
+        }
 
-    .container2 p:last-child a {
-        color: #007bff;
-        text-decoration: none;
-    }
+        .priority-medium {
+            background: #fef3c7;
+            color: var(--warning-color);
+        }
 
-    .container2 p:last-child a:hover {
-        text-decoration: underline;
-    }
+        .priority-low {
+            background: #d1fae5;
+            color: var(--accent-color);
+        }
 
-    /* Background image */
-    body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        /* Minimum height of viewport */
-        width: 100%;
-        background: linear-gradient(to bottom, #0d0d5c, #00c1c1, #0d0d5c);
-        background-position: center;
-        background-size: cover;
-        overflow-y: auto;
-        /* Always show scrollbar */
-    }
-    .logout-button {
-    position: absolute;
-    top: 45px; /* Adjust top position as needed */
-    left: 1120px; /* Adjust right position as needed */
-    padding: 10px 20px;
-    background-color: #ffdf00; /* Electric Yellow */
-    color: black; /* Example color */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.logout-button {
-    background-color: #ffdf00; /* Electric Yellow */
-    /* Add other button styles */
-    transition: background-color 0.3s ease; /* Smooth transition effect */
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
 
-}
+        .btn-sm-modern {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s ease;
+        }
 
-/* Hover Effect */
-.logout-button:hover {
-    background-color: #ffad29; /* Darker shade of Electric Yellow */
-}
-</style>
+        .btn-success-modern {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-success-modern:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger-sm-modern {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger-sm-modern:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        /* Alerts */
+        .alert-modern {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: none;
+        }
+
+        .alert-success-modern {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-danger-modern {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs-modern {
+                flex-direction: column;
+            }
+
+            .table-modern {
+                font-size: 0.875rem;
+            }
+
+            .table-modern thead th,
+            .table-modern tbody td {
+                padding: 1rem 0.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <button class="logout-button" id="logoutBtn">Logout</button>
-</div>
+    <!-- Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-<script>
-    document.getElementById("logoutBtn").addEventListener("click", function() {
-        window.location.href = "user_logout.php";
-    });
-    </script>
-    <div class="logo">
-        <img src="og.jpg" alt="Logo">
-    </div>
-
-    <input type="checkbox" id="check">
-    <label for="check">
-        <i class="fas fa-bars" id="btn"></i>
-        <i class="fas fa-times" id="cancel"></i>
-    </label>
-    <div class="sidebar">
-        <header>Menu</header>
-       
-        <a href="taskmanager.php">
-            <i class="fas fa-qrcode"></i>
-            <span>Task manager</span>
-        </a>
-        <a href="calendar.html">
-            <i class="fas fa-calendar"></i>
-            <span>Events</span>
-        </a>
-        <a href="aboutus.php">
-            <i class="far fa-question-circle"></i>
-            <span>About</span>
-        </a>
-        <a href="contact.php">
-            <i class="far fa-envelope"></i>
-            <span>Contact</span>
-        </a>
-        <a href="user_logout.php" onclick="return confirm('Leaving too soon ? :( ');">
-            <i class="fas fa-sliders-h"></i>
-            <span>LogOut</span>
-        </a>
-    </div>
-
-    <!-- Content Wrapper -->
-    <div class="wrapper">
-        <nav>
-        <!-- Navigation Bar -->
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <a href="taskmanager.php" style="text-decoration: none;"><button class="nav-link active" id="nav-home-tab"
-                        data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab"
-                        aria-controls="nav-home" aria-selected="true"><b>All Tasks</b></button></a>
-                <?php
-                $conn2 = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD) or die(mysqli_error());
-                $db_select2 = mysqli_select_db($conn2, DB_NAME) or die(mysqli_error());
-                $sql2 = "SELECT * FROM tbl_lists";
-                $res2 = mysqli_query($conn2, $sql2);
-                if ($res2 == true) {
-                    while ($row2 = mysqli_fetch_assoc($res2)) {
-                        $list_id = $row2['list_id'];
-                        $list_name = $row2['list_name'];
-                        ?>
-                            <div class="px-3"></div>
-
-                        <a href="<?php echo SITEURL; ?>list-task.php?list_id=<?php echo $list_id; ?>"
-                            style="text-decoration: none;"><button class="nav-link active" id="nav-home-tab"
-                                data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab"
-                                aria-controls="nav-home" aria-selected="true"><b><?php echo $list_name; ?></b></button></a>
-                        <?php
-                    }
-                }
-                ?>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-tasks"></i> OrganizeHub</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="taskmanager.php">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Task Manager</span>
+            </a>
+            <a href="calendar.html">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="aboutus.php">
+                <i class="fas fa-info-circle"></i>
+                <span>About Us</span>
+            </a>
+            <a href="contact.php">
+                <i class="fas fa-envelope"></i>
+                <span>Contact</span>
+            </a>
+            <a href="user_logout.php" onclick="return confirm('Are you sure you want to logout?')">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
         </nav>
-        <!-- Tasks Section -->
-        <div class="all-tasks">
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header fade-in">
+            <h1><i class="fas fa-tasks"></i> Task Dashboard</h1>
+            <div class="header-actions">
+                <a href="<?php echo SITEURL; ?>add-task.php" class="btn-modern btn-primary-modern">
+                    <i class="fas fa-plus"></i>
+                    Add New Task
+                </a>
+                <a href="user_logout.php" class="btn-modern btn-danger-modern" onclick="return confirm('Are you sure you want to logout?')">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs-modern fade-in">
+            <a href="taskmanager.php" class="nav-tab-modern active">
+                <i class="fas fa-list"></i> All Tasks
+            </a>
+            <?php
+            $conn2 = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
+            if (!$conn2) {
+                die("Connection failed: " . mysqli_connect_error());
+            }
+            $db_select2 = mysqli_select_db($conn2, DB_NAME) or die(mysqli_error($conn2));
+            $sql2 = "SELECT * FROM tbl_lists ORDER BY list_name";
+            $res2 = mysqli_query($conn2, $sql2);
+            if ($res2 == true) {
+                while ($row2 = mysqli_fetch_assoc($res2)) {
+                    $list_id = $row2['list_id'];
+                    $list_name = $row2['list_name'];
+                    ?>
+                    <a href="<?php echo SITEURL; ?>list-task.php?list_id=<?php echo $list_id; ?>" class="nav-tab-modern">
+                        <i class="fas fa-folder"></i> <?php echo htmlspecialchars($list_name); ?>
+                    </a>
+                    <?php
+                }
+            }
+            ?>
+        </div>
+
+        <!-- Tasks Container -->
+        <div class="tasks-container fade-in">
             <!-- Session Messages -->
             <?php if (isset($_SESSION['delete']) || isset($_SESSION['update']) || isset($_SESSION['delete_fail'])): ?>
-                <p>
+                <div class="alert-modern <?php echo isset($_SESSION['delete']) ? 'alert-success-modern' : 'alert-danger-modern'; ?>">
+                    <i class="fas <?php echo isset($_SESSION['delete']) ? 'fa-check-circle' : 'fa-exclamation-triangle'; ?>"></i>
                     <?php
                     echo isset($_SESSION['delete']) ? $_SESSION['delete'] : '';
                     echo isset($_SESSION['update']) ? $_SESSION['update'] : '';
@@ -593,67 +542,142 @@ if (isset($_SESSION['user_id'])) {
                     unset($_SESSION['update']);
                     unset($_SESSION['delete_fail']);
                     ?>
-                </p>
+                </div>
             <?php endif; ?>
-            <!-- Add Task Button -->
-            <div><br><div>
-
-            <a href="<?php echo SITEURL; ?>add-task.php"><button class="btn btn-dark">Add Task</button></a>
-            <div><br><div>
 
             <!-- Tasks Table -->
-            <table class="table table-hover table-dark">
-                <tr>
-                    <th>S.N.</th>
-                    <th>Task Name</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Deadline</th>
-                    <th>Actions</th>
-                </tr>
-                <?php
-                $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD) or die(mysqli_error());
-                $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error());
-                $sql = "SELECT t.*, l.list_name FROM tbl_tasks t LEFT JOIN tbl_lists l ON t.list_id = l.list_id WHERE t.user_id = $user_id";
-
-                $res = mysqli_query($conn, $sql);
-                if ($res == true) {
-                    $sn = 1;
-                    $count_rows = mysqli_num_rows($res);
-                    if ($count_rows > 0) {
-                        while ($row = mysqli_fetch_assoc($res)) {
-                            $task_id = $row['task_id'];
-                            $task_name = $row['task_name'];
-                            $list_name = $row['list_name'];
-                            $priority = $row['priority'];
-                            $deadline = $row['deadline'];
-                            ?>
-                            <tr>
-                                <td><?php echo $sn++; ?>. </td>
-                                <td><?php echo $task_name; ?></td>
-                                <td><?php echo $list_name; ?></td>
-                                <td><?php echo $priority; ?></td>
-                                <td><?php echo $deadline; ?></td>
-                                <td>
-                                    <a href="<?php echo SITEURL; ?>update-task.php?task_id=<?php echo $task_id; ?>"><button
-                                            class="btn btn-success btn-sm">Update</button></a>
-                                    <a href="<?php echo SITEURL; ?>delete-task.php?task_id=<?php echo $task_id; ?>"><button
-                                            class="btn btn-danger btn-sm">Remove</button></a>
-                                </td>
-                            </tr>
-                            <?php
-                        }
-                    } else {
-                        ?>
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
                         <tr>
-                            <td colspan="5">No Task Added Yet.</td>
+                            <th><i class="fas fa-hashtag"></i> #</th>
+                            <th><i class="fas fa-tasks"></i> Task Name</th>
+                            <th><i class="fas fa-list"></i> List</th>
+                            <th><i class="fas fa-flag"></i> Priority</th>
+                            <th><i class="fas fa-calendar"></i> Deadline</th>
+                            <th><i class="fas fa-cogs"></i> Actions</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         <?php
-                    }
-                }
-                ?>
-            </table>
-        </div>        <!-- Footer -->
+                        $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
+                        if (!$conn) {
+                            die("Connection failed: " . mysqli_connect_error());
+                        }
+                        $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error($conn));
+                        $sql = "SELECT t.*, l.list_name FROM tbl_tasks t LEFT JOIN tbl_lists l ON t.list_id = l.list_id WHERE t.user_id = $user_id ORDER BY t.deadline ASC";
+
+                        $res = mysqli_query($conn, $sql);
+                        if ($res == true) {
+                            $sn = 1;
+                            $count_rows = mysqli_num_rows($res);
+                            if ($count_rows > 0) {
+                                while ($row = mysqli_fetch_assoc($res)) {
+                                    $task_id = $row['task_id'];
+                                    $task_name = $row['task_name'];
+                                    $list_name = $row['list_name'] ?? 'Uncategorized';
+                                    $priority = $row['priority'];
+                                    $deadline = $row['deadline'];
+                                    
+                                    // Determine priority class
+                                    $priority_class = 'priority-low';
+                                    if (strtolower($priority) == 'high') {
+                                        $priority_class = 'priority-high';
+                                    } elseif (strtolower($priority) == 'medium') {
+                                        $priority_class = 'priority-medium';
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td><strong><?php echo $sn++; ?></strong></td>
+                                        <td>
+                                            <strong><?php echo htmlspecialchars($task_name); ?></strong>
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-folder"></i> <?php echo htmlspecialchars($list_name); ?>
+                                        </td>
+                                        <td>
+                                            <span class="priority-badge <?php echo $priority_class; ?>">
+                                                <?php echo htmlspecialchars($priority); ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-calendar"></i> 
+                                            <?php echo date('M d, Y', strtotime($deadline)); ?>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="<?php echo SITEURL; ?>update-task.php?task_id=<?php echo $task_id; ?>" 
+                                                   class="btn-sm-modern btn-success-modern">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <a href="<?php echo SITEURL; ?>delete-task.php?task_id=<?php echo $task_id; ?>" 
+                                                   class="btn-sm-modern btn-danger-sm-modern"
+                                                   onclick="return confirm('Are you sure you want to delete this task?')">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                            } else {
+                                ?>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <i class="fas fa-clipboard-list"></i>
+                                            <h3>No Tasks Found</h3>
+                                            <p>Get started by adding your first task!</p>
+                                            <a href="<?php echo SITEURL; ?>add-task.php" class="btn-modern btn-primary-modern">
+                                                <i class="fas fa-plus"></i> Add Task
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Use a class to control margin-left for main content
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const toggleBtn = document.querySelector('.sidebar-toggle');
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-open', sidebar.classList.contains('active'));
+            toggleBtn.classList.toggle('sidebar-open', sidebar.classList.contains('active'));
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.sidebar-toggle');
+            const mainContent = document.getElementById('mainContent');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+                mainContent.classList.remove('sidebar-open');
+                toggle.classList.remove('sidebar-open');
+            }
+        });
+
+        // Add smooth transitions and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add fade-in animation to table rows
+            const rows = document.querySelectorAll('.table-modern tbody tr');
+            rows.forEach((row, index) => {
+                row.style.animationDelay = `${index * 0.1}s`;
+                row.classList.add('fade-in');
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <!DOCTYPE html>
 <html lang="en">
@@ -789,4 +790,602 @@ body {
   <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
 
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Calendar Events Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .auth-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .btn-primary {
+            background: #4285f4;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #ea4335;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #d93025;
+            transform: translateY(-2px);
+        }
+
+        .form-section {
+            display: none;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4285f4;
+        }
+
+        .time-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-success {
+            background: #34a853;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+        }
+
+        .btn-success:hover {
+            background: #2d8f3f;
+        }
+
+        .events-section {
+            margin-top: 30px;
+        }
+
+        .events-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #4285f4;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .event-time {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: #fff;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            z-index: 1000;
+            border-right: 1px solid #e2e8f0;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
+        .sidebar-header h3 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+        .sidebar-nav { padding: 2rem 0; }
+        .sidebar-nav a {
+            display: flex; align-items: center; padding: 1rem 1.5rem;
+            color: #1e293b; text-decoration: none;
+            transition: all 0.2s ease; border-left: 4px solid transparent;
+        }
+        .sidebar-nav a:hover {
+            background: #f1f5f9;
+            border-left-color: #6366f1;
+            color: #6366f1;
+            transform: translateX(5px);
+        }
+        .sidebar-nav a i { width: 20px; margin-right: 1rem; font-size: 1.1rem; }
+        .sidebar-toggle {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 2001; /* higher than sidebar */
+            background: #fff;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease, left 0.3s cubic-bezier(0.4,0,0.2,1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-toggle:hover {
+            background: #6366f1;
+            color: white;
+            transform: scale(1.05);
+        }
+        .sidebar-toggle i {
+            font-size: 1.2rem;
+        }
+        .sidebar-toggle.sidebar-open {
+            left: 300px;
+        }
+        #mainContent {
+            transition: margin-left 0.3s ease;
+        }
+        #mainContent.sidebar-open {
+            margin-left: 280px;
+        }
+        @media (max-width: 768px) {
+            #mainContent { padding: 1rem; }
+            .sidebar { width: 80vw; }
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-tasks"></i> OrganizeHub</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="taskmanager.php">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Task Manager</span>
+            </a>
+            <a href="calendar.html">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="aboutus.php">
+                <i class="fas fa-info-circle"></i>
+                <span>About Us</span>
+            </a>
+            <a href="contact.php">
+                <i class="fas fa-envelope"></i>
+                <span>Contact</span>
+            </a>
+            <a href="user_logout.php" onclick="return confirm('Are you sure you want to logout?')">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="container" id="mainContent">
+        <h1>📅 Google Calendar Events Manager</h1>
+
+        <div class="auth-section">
+            <button id="authorize_button" class="btn btn-primary" onclick="handleAuthClick()">
+                🔐 Authorize Google Calendar
+            </button>
+            <button id="signout_button" class="btn btn-secondary" onclick="handleSignoutClick()" style="display: none;">
+                🚪 Sign Out
+            </button>
+        </div>
+
+        <div id="message"></div>
+
+        <div id="event_form" class="form-section">
+            <h2>➕ Add New Event</h2>
+            <form onsubmit="return false;">
+                <div class="form-group">
+                    <label for="title">Event Title *</label>
+                    <input type="text" id="title" class="form-control" placeholder="Enter event title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" class="form-control" rows="3" placeholder="Enter event description"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="start_date">Start Date *</label>
+                    <input type="date" id="start_date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_date">End Date *</label>
+                    <input type="date" id="end_date" class="form-control" required>
+                </div>
+                <div class="time-group">
+                    <div class="form-group">
+                        <label for="start_time">Start Time (optional)</label>
+                        <input type="time" id="start_time" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="end_time">End Time (optional)</label>
+                        <input type="time" id="end_time" class="form-control">
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success" onclick="addEvent()">
+                    ✨ Create Event
+                </button>
+            </form>
+        </div>
+
+        <div class="events-section">
+            <h2>📋 Upcoming Events</h2>
+            <div id="events_list" class="events-list">
+                <div class="loading">No events to display. Please authorize first.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TODO: Replace with your actual credentials
+        const CLIENT_ID = '968324928137-743a0pgn3k92pmhpbvaief18gj1tt7cu.apps.googleusercontent.com';
+        const API_KEY = 'AIzaSyA3UJ5BTY30sMrb5WX9--8aJd3fkbUs8BQ';
+        
+        const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar';
+
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+
+        // Initialize the API
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
+        }
+
+        async function initializeGapiClient() {
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [DISCOVERY_DOC],
+            });
+            gapiInited = true;
+            maybeEnableButtons();
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: '', // defined later
+            });
+            gisInited = true;
+            maybeEnableButtons();
+        }
+
+        function maybeEnableButtons() {
+            if (gapiInited && gisInited) {
+                document.getElementById('authorize_button').style.display = 'inline-block';
+            }
+        }
+
+        function handleAuthClick() {
+            tokenClient.callback = async (resp) => {
+                if (resp.error !== undefined) {
+                    showMessage('Authorization failed: ' + resp.error, 'error');
+                    return;
+                }
+                
+                document.getElementById('signout_button').style.display = 'inline-block';
+                document.getElementById('event_form').style.display = 'block';
+                document.getElementById('authorize_button').textContent = '🔄 Refresh Authorization';
+                
+                showMessage('Successfully authorized! You can now create events.', 'success');
+                await listUpcomingEvents();
+            };
+
+            if (gapi.client.getToken() === null) {
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+                tokenClient.requestAccessToken({prompt: ''});
+            }
+        }
+
+        function handleSignoutClick() {
+            const token = gapi.client.getToken();
+            if (token !== null) {
+                google.accounts.oauth2.revoke(token.access_token);
+                gapi.client.setToken('');
+                document.getElementById('signout_button').style.display = 'none';
+                document.getElementById('event_form').style.display = 'none';
+                document.getElementById('authorize_button').textContent = '🔐 Authorize Google Calendar';
+                document.getElementById('events_list').innerHTML = '<div class="loading">No events to display. Please authorize first.</div>';
+                showMessage('Signed out successfully.', 'success');
+            }
+        }
+
+        async function listUpcomingEvents() {
+            let response;
+            try {
+                const request = {
+                    'calendarId': 'primary',
+                    'timeMin': (new Date()).toISOString(),
+                    'showDeleted': false,
+                    'singleEvents': true,
+                    'maxResults': 10,
+                    'orderBy': 'startTime',
+                };
+                response = await gapi.client.calendar.events.list(request);
+            } catch (err) {
+                showMessage('Error loading events: ' + err.message, 'error');
+                return;
+            }
+
+            const events = response.result.items;
+            const eventsContainer = document.getElementById('events_list');
+            
+            if (!events || events.length === 0) {
+                eventsContainer.innerHTML = '<div class="loading">No upcoming events found.</div>';
+                return;
+            }
+
+            const eventsHTML = events.map(event => {
+                const start = event.start.dateTime || event.start.date;
+                const formattedDate = new Date(start).toLocaleString();
+                return `
+                    <div class="event-item">
+                        <div class="event-title">${event.summary || 'Untitled Event'}</div>
+                        <div class="event-time">📅 ${formattedDate}</div>
+                        ${event.description ? `<div style="margin-top: 8px; color: #666;">${event.description}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            eventsContainer.innerHTML = eventsHTML;
+        }
+
+        async function addEvent() {
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const startTime = document.getElementById('start_time').value;
+            const endTime = document.getElementById('end_time').value;
+
+            if (!title || !startDate || !endDate) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+
+            // If times are provided, use dateTime, else use date (all-day event)
+            let start, end;
+            if (startTime && endTime) {
+                // Multi-day event with time
+                const startDateTime = new Date(`${startDate}T${startTime}`);
+                // For Google Calendar, end dateTime must be after start
+                let endDateTime = new Date(`${endDate}T${endTime}`);
+                // If end date is same as start and end time is before start time, show error
+                if (startDate === endDate && endTime <= startTime) {
+                    showMessage('End time must be after start time.', 'error');
+                    return;
+                }
+                // If end date is before start date, show error
+                if (endDate < startDate) {
+                    showMessage('End date must be after start date.', 'error');
+                    return;
+                }
+                start = {
+                    dateTime: startDateTime.toISOString(),
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                };
+                end = {
+                    dateTime: endDateTime.toISOString(),
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                };
+            } else {
+                // All-day event (Google Calendar: end date is exclusive, so add 1 day)
+                if (endDate < startDate) {
+                    showMessage('End date must be after start date.', 'error');
+                    return;
+                }
+                // Add 1 day to end date for Google Calendar all-day event
+                let endDateObj = new Date(endDate);
+                endDateObj.setDate(endDateObj.getDate() + 1);
+                start = { date: startDate };
+                end = { date: endDateObj.toISOString().split('T')[0] };
+            }
+
+            const event = {
+                summary: title,
+                description: description,
+                start: start,
+                end: end,
+                reminders: {
+                    useDefault: false,
+                    overrides: [
+                        { method: 'email', minutes: 24 * 60 },
+                        { method: 'popup', minutes: 10 },
+                    ],
+                },
+            };
+
+            gapi.client.calendar.events.insert({
+                calendarId: 'primary',
+                resource: event,
+            }).then(function(response) {
+                showMessage(`Event "${title}" created successfully!`, 'success');
+                // Clear form
+                document.getElementById('title').value = '';
+                document.getElementById('description').value = '';
+                document.getElementById('start_date').value = '';
+                document.getElementById('end_date').value = '';
+                document.getElementById('start_time').value = '';
+                document.getElementById('end_time').value = '';
+                listUpcomingEvents();
+
+                // Show desktop notification
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("Event added!", { body: `Your event "${title}" was added to Google Calendar.` });
+                } else if ("Notification" in window && Notification.permission !== "denied") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            new Notification("Event added!", { body: `Your event "${title}" was added to Google Calendar.` });
+                        }
+                    });
+                }
+            }, function(error) {
+                showMessage('Error creating event: ' + error.message, 'error');
+            });
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Set today's date as default
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('start_date').value = today;
+            document.getElementById('end_date').value = today;
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const toggleBtn = document.querySelector('.sidebar-toggle');
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-open', sidebar.classList.contains('active'));
+            toggleBtn.classList.toggle('sidebar-open', sidebar.classList.contains('active'));
+        }
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.sidebar-toggle');
+            const mainContent = document.getElementById('mainContent');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+                mainContent.classList.remove('sidebar-open');
+                toggle.classList.remove('sidebar-open');
+            }
+        });
+    </script>
+
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body>
+>>>>>>> 875f279 (Rebuilt)
 </html>
